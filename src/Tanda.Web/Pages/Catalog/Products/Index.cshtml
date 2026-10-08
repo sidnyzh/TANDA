@@ -1,0 +1,10 @@
+@page
+@model Tanda.Web.Pages.Catalog.Products.IndexModel
+@{ ViewData["Title"] = "Productos"; }
+<h1>Productos</h1>
+<a class="btn btn-primary mb-3" asp-page="Create">Nuevo producto</a>
+<form method="get" class="mb-3"><label><input type="checkbox" name="includeInactive" value="true" @(Model.IncludeInactive ? "checked" : "") /> Mostrar inactivos</label><label class="ms-3">Categoría <select asp-for="Category" asp-items="Model.Categories" class="form-select d-inline-block w-auto" onchange="this.form.submit()"><option value="">Todas</option></select></label><button class="btn btn-secondary ms-2">Filtrar</button></form>
+@if (TempData["Message"] is string message) { <div class="alert alert-success">@message</div> }
+<table class="table"><thead><tr><th>Nombre</th><th>Categoría</th><th>Anticipación mínima</th><th>Tamaños</th><th>Estado</th><th></th></tr></thead><tbody>
+@foreach (var item in Model.Items) { <tr><td>@item.Name</td><td>@item.Category</td><td>@item.MinimumLeadDays días</td><td>@item.Sizes.Count</td><td>@(item.IsActive ? "Activo" : "Inactivo")</td><td><a asp-page="Details" asp-route-id="@item.Id">Detalle</a> | <a asp-page="Edit" asp-route-id="@item.Id">Editar</a>@if (item.IsActive) { <text> | </text><a asp-page="Deactivate" asp-route-id="@item.Id">Inactivar</a> }</td></tr> }
+</tbody></table>

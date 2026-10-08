@@ -1,0 +1,8 @@
+@page "{id:guid}"
+@model Tanda.Web.Pages.Catalog.Products.DetailsModel
+@{ ViewData["Title"] = "Detalle del producto"; }
+@if (TempData["Message"] is string message) { <div class="alert alert-success">@message</div> }
+<h1>@Model.Product.Name</h1><p>Categoría: @Model.Product.Category<br />Anticipación mínima: @Model.Product.MinimumLeadDays días<br />Estado: @(Model.Product.IsActive ? "Activo" : "Inactivo")</p>
+@foreach(var item in Model.Product.Sizes){<tr><td>@item.Name</td><td>@item.BasePrice</td><td>@item.Esfuerzo</td><td><a asp-page="/Catalog/Sizes/Edit" asp-route-id="@item.Id">Editar</a> <form method="post" asp-page="/Catalog/Sizes/Delete" asp-route-id="@item.Id" asp-route-productId="@Model.Product.Id" class="d-inline"><button class="btn btn-link">Eliminar</button></form></td></tr>}
+@foreach(var item in Model.Product.Additions){<tr><td>@item.Name</td><td>@item.Price</td><td>@(item.IsActive?"Activa":"Inactiva")</td><td><a asp-page="/Catalog/Additions/Edit" asp-route-id="@item.Id">Editar</a> <form method="post" asp-page="/Catalog/Additions/Delete" asp-route-id="@item.Id" asp-route-productId="@Model.Product.Id" class="d-inline"><button class="btn btn-link">Eliminar</button></form></td></tr>}
+<a asp-page="Index">Volver</a>
