@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -30,7 +30,6 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="Pages\Catalog\" />
     <Folder Include="Pages\Customers\" />
     <Folder Include="Pages\Orders\" />
   </ItemGroup>

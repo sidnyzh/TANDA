@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Tanda.Web.Data;
 
 using Microsoft.AspNetCore.Identity;
 using Tanda.Infrastructure;
@@ -10,6 +11,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
         options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<TandaDbContext>();
 
 builder.Services.AddRazorPages();
@@ -36,5 +38,7 @@ app.UseAuthorization();
 app.MapStaticAssets();
 app.MapRazorPages()
    .WithStaticAssets();
+
+await IdentitySeeder.SeedRolesAsync(app.Services);
 
 app.Run();

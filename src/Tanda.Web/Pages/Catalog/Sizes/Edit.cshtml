@@ -1,0 +1,4 @@
+@page "{id:guid}"
+@model Tanda.Web.Pages.Catalog.Sizes.EditModel
+@{ViewData["Title"]="Editar tamaño";}<h1>Editar tamaño</h1><form method="post"><input asp-for="Input.Id" type="hidden"/><input asp-for="Input.ProductId" type="hidden"/><div asp-validation-summary="ModelOnly" class="text-danger"></div><label asp-for="Input.Name"></label><input asp-for="Input.Name" class="form-control"/><span asp-validation-for="Input.Name" class="text-danger"></span><label asp-for="Input.BasePrice"></label><input asp-for="Input.BasePrice" class="form-control"/><span asp-validation-for="Input.BasePrice" class="text-danger"></span><label asp-for="Input.Esfuerzo"></label><input asp-for="Input.Esfuerzo" class="form-control"/><span asp-validation-for="Input.Esfuerzo" class="text-danger"></span><button class="btn btn-primary mt-3">Guardar</button></form>
+@section Scripts{<partial name="_ValidationScriptsPartial"/>}

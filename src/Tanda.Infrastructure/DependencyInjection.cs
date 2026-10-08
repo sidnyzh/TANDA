@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Tanda.Domain.Abstractions;
 using Tanda.Infrastructure.Configuration;
 using Tanda.Infrastructure.Persistence;
+using Tanda.Infrastructure.Repositories;
 
 namespace Tanda.Infrastructure;
 
@@ -27,6 +28,10 @@ public static class DependencyInjection
 
         services.AddSingleton<IBusinessParameters, BusinessParametersProvider>();
         services.AddSingleton(TimeProvider.System);
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<ISizeRepository, SizeRepository>();
+        services.AddScoped<IAdditionRepository, AdditionRepository>();
+        services.AddScoped<IDailyCapacityRepository, DailyCapacityRepository>();
 
         return services;
     }

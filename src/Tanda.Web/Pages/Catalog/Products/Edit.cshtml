@@ -1,0 +1,6 @@
+@page "{id:guid}"
+@model Tanda.Web.Pages.Catalog.Products.EditModel
+@{ ViewData["Title"] = "Editar producto"; }
+<h1>Editar producto</h1><form method="post"><input asp-for="Input.Id" type="hidden" /><div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="mb-3"><label asp-for="Input.Name"></label><input asp-for="Input.Name" class="form-control" /><span asp-validation-for="Input.Name" class="text-danger"></span></div><div class="mb-3"><label asp-for="Input.Category"></label><select asp-for="Input.Category" asp-items="Model.Categories" class="form-select"><option value="">Seleccione una categoría</option></select><span asp-validation-for="Input.Category" class="text-danger"></span></div><div class="mb-3"><label asp-for="Input.MinimumLeadDays"></label><input asp-for="Input.MinimumLeadDays" class="form-control" /><span asp-validation-for="Input.MinimumLeadDays" class="text-danger"></span></div><button class="btn btn-primary">Guardar</button> <a asp-page="Index">Cancelar</a></form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

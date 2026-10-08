@@ -1,0 +1,4 @@
+@page "{id:guid}"
+@model Tanda.Web.Pages.Catalog.Products.DeactivateModel
+@{ ViewData["Title"] = "Inactivar producto"; }
+<h1>Inactivar producto</h1><p>El producto dejará de aparecer en nuevas cotizaciones, pero se conservará en los pedidos ya registrados.</p><p><strong>@Model.Product.Name</strong></p><form method="post"><button class="btn btn-danger">Confirmar inactivación</button> <a asp-page="Index">Cancelar</a></form>
