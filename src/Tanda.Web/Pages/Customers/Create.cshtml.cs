@@ -10,7 +10,7 @@ using Tanda.Infrastructure.Persistence;
 
 namespace Tanda.Web.Pages.Customers;
 
-[Authorize(Roles = "Administrador,Vendedor")]
+[Authorize(Roles = "Administrator,Salesperson")]
 public class CreateModel(CustomerRegistrationService registrationService, TandaDbContext db) : PageModel
 {
     [BindProperty]

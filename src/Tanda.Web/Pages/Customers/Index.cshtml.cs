@@ -6,7 +6,7 @@ using Tanda.Domain.Entities;
 
 namespace Tanda.Web.Pages.Customers;
 
-[Authorize(Roles = "Administrador,Vendedor")]
+[Authorize(Roles = "Administrator,Salesperson")]
 public class IndexModel(ICustomerRepository customers) : PageModel
 {
     public IReadOnlyList<Customer> Items { get; private set; } = [];

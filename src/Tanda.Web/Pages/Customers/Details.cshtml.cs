@@ -7,7 +7,7 @@ using Tanda.Domain.ReadModels;
 
 namespace Tanda.Web.Pages.Customers;
 
-[Authorize(Roles = "Administrador,Vendedor")]
+[Authorize(Roles = "Administrator,Salesperson")]
 public class DetailsModel(ICustomerRepository customers) : PageModel
 {
     public Customer? Customer { get; private set; }
