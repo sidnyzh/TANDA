@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Tanda.Web.Data;
 
 using Microsoft.AspNetCore.Identity;

@@ -249,6 +249,50 @@ namespace Tanda.Infrastructure.Persistence.Migrations
                     b.ToTable("Additions");
                 });
 
+            modelBuilder.Entity("Tanda.Domain.Entities.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly?>("DataConsentDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("DocumentNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentType", "DocumentNumber")
+                        .IsUnique();
+
+                    b.ToTable("Customers", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Customers_DocumentType", "[DocumentType] IN ('CC', 'CE', 'NIT', 'PA')");
+                        });
+                });
+
             modelBuilder.Entity("Tanda.Domain.Entities.DailyCapacity", b =>
                 {
                     b.Property<DateOnly>("Date")
@@ -270,6 +314,57 @@ namespace Tanda.Infrastructure.Persistence.Migrations
 
                             t.HasCheckConstraint("CK_DailyCapacities_TotalEsfuerzo", "[TotalEsfuerzo] > 0");
                         });
+                });
+
+            modelBuilder.Entity("Tanda.Domain.Entities.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("DeliveryDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("RequestDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Tanda.Domain.Entities.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Tanda.Domain.Entities.Product", b =>
@@ -399,6 +494,28 @@ namespace Tanda.Infrastructure.Persistence.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Tanda.Domain.Entities.Order", b =>
+                {
+                    b.HasOne("Tanda.Domain.Entities.Customer", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Tanda.Domain.Entities.Payment", b =>
+                {
+                    b.HasOne("Tanda.Domain.Entities.Order", "Order")
+                        .WithMany("Payments")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("Tanda.Domain.Entities.Size", b =>
                 {
                     b.HasOne("Tanda.Domain.Entities.Product", "Product")
@@ -408,6 +525,16 @@ namespace Tanda.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Tanda.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Tanda.Domain.Entities.Order", b =>
+                {
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("Tanda.Domain.Entities.Product", b =>
