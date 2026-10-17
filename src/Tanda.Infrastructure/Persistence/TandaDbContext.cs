@@ -19,6 +19,8 @@ public sealed class TandaDbContext : IdentityDbContext
 
     public DbSet<DailyCapacity> DailyCapacities => Set<DailyCapacity>();
 
+    public DbSet<Customer> Customers => Set<Customer>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
