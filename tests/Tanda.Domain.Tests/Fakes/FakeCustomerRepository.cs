@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tanda.Domain.Abstractions;
 using Tanda.Domain.Entities;
+using Tanda.Domain.ReadModels;
 
 namespace Tanda.Domain.Tests.Fakes;
 
@@ -29,6 +30,9 @@ public sealed class FakeCustomerRepository : ICustomerRepository
 
     public Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         Task.FromResult(_customers.SingleOrDefault(customer => customer.Id == id));
+
+    public Task<IReadOnlyList<CustomerOrderSummary>> GetOrderHistoryAsync(Guid customerId, CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<CustomerOrderSummary>>(Array.Empty<CustomerOrderSummary>());
 
     public Task AddAsync(Customer customer, CancellationToken cancellationToken = default)
     {

@@ -21,5 +21,12 @@ namespace Tanda.Domain.Abstractions
         Task<IReadOnlyList<global::Tanda.Domain.Entities.Customer>> SearchAsync(
             string? term,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Returns the customer's orders ordered by request date descending, and an empty list when the customer has no orders or does not exist.
+        /// </summary>
+        Task<IReadOnlyList<global::Tanda.Domain.ReadModels.CustomerOrderSummary>> GetOrderHistoryAsync(
+            Guid customerId,
+            CancellationToken cancellationToken = default);
     }
 }

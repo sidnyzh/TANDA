@@ -21,6 +21,10 @@ public sealed class TandaDbContext : IdentityDbContext
 
     public DbSet<Customer> Customers => Set<Customer>();
 
+    public DbSet<Order> Orders => Set<Order>();
+
+    public DbSet<Payment> Payments => Set<Payment>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
