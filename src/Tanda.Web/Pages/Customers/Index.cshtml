@@ -1,0 +1,57 @@
+@page
+@model Tanda.Web.Pages.Customers.IndexModel
+@{ ViewData["Title"] = "Clientes"; }
+<h1>Clientes</h1>
+
+<div class="mb-3">
+    <a class="btn btn-primary" asp-page="Create">Nuevo cliente</a>
+</div>
+
+<form method="get" class="row g-2 align-items-center mb-3">
+    <div class="col-auto">
+        <input asp-for="SearchTerm" class="form-control" placeholder="Buscar por documento, nombre o teléfono" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-secondary">Buscar</button>
+    </div>
+</form>
+
+@if (!Model.Items.Any())
+{
+    if (Model.HasSearchTerm)
+    {
+        <div class="alert alert-info">No se encontraron clientes con el criterio ingresado.</div>
+    }
+    else
+    {
+        <div class="alert alert-info">Aún no hay clientes registrados.</div>
+    }
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Documento</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Consentimiento</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.DocumentType @item.DocumentNumber</td>
+                    <td>@item.FullName</td>
+                    <td>@item.Phone</td>
+                    <td>@item.Email</td>
+                    <td>@(item.DataConsentDate.HasValue ? "Sí" : "No")</td>
+                    <td><a asp-page="Details" asp-route-id="@item.Id">Detalles</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

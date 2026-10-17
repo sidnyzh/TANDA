@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tanda.Domain.Abstractions;
+using Tanda.Domain.Services;
 using Tanda.Infrastructure.Configuration;
 using Tanda.Infrastructure.Persistence;
 using Tanda.Infrastructure.Repositories;
@@ -33,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<IAdditionRepository, AdditionRepository>();
         services.AddScoped<IDailyCapacityRepository, DailyCapacityRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<CustomerRegistrationService>();
 
         return services;
     }
