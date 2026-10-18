@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Tanda.Web.Data;
-
-using Microsoft.AspNetCore.Identity;
 using Tanda.Infrastructure;
 using Tanda.Infrastructure.Persistence;
+using Tanda.Web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
