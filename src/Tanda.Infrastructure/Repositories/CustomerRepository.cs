@@ -14,10 +14,12 @@ public sealed class CustomerRepository(TandaDbContext db) : ICustomerRepository
     public Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         db.Customers.AsNoTracking().SingleOrDefaultAsync(customer => customer.Id == id, cancellationToken);
 
-    public Task<IReadOnlyList<CustomerOrderSummary>> GetOrderHistoryAsync(Guid customerId, CancellationToken cancellationToken = default) =>
-        db.Orders
+    public async Task<IReadOnlyList<CustomerOrderSummary>> GetOrderHistoryAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        var orders = await db.Orders
             .AsNoTracking()
             .Where(order => order.CustomerId == customerId)
+            .OrderByDescending(order => order.RequestDate)
             .Select(order => new CustomerOrderSummary(
                 order.Id,
                 order.Number,
@@ -27,9 +29,10 @@ public sealed class CustomerRepository(TandaDbContext db) : ICustomerRepository
                 order.TotalAmount,
                 order.Payments.Sum(payment => payment.Amount),
                 order.TotalAmount - order.Payments.Sum(payment => payment.Amount)))
-            .OrderByDescending(summary => summary.RequestDate)
-            .ToListAsync(cancellationToken)
-            .ContinueWith(static task => (IReadOnlyList<CustomerOrderSummary>)task.Result, cancellationToken);
+            .ToListAsync(cancellationToken);
+
+        return orders;
+    }
 
     public async Task<IReadOnlyList<Customer>> SearchAsync(string? term, CancellationToken cancellationToken = default)
     {
