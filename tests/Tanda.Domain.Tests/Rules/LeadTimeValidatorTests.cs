@@ -1,46 +1,74 @@
 using FluentAssertions;
 using Tanda.Domain.Rules;
+using Xunit;
 
 namespace Tanda.Domain.Tests.Rules;
 
-public class LeadTimeValidatorTests
+/// <summary>
+/// Pruebas derivadas de la tabla de fronteras del RTF3 §5.2.
+/// </summary>
+public sealed class LeadTimeValidatorTests
 {
     [Theory]
-    [InlineData(0, 0)]
-    [InlineData(2, 2)]
-    [InlineData(2, 5)]
-    public void Validate_CumpleConElPlazo_MinimoYSuperiores_RetornaValido(int minimumLeadDays, int leadDays)
+    [InlineData(0, false)]
+    [InlineData(2, false)]
+    [InlineData(3, false)]
+    [InlineData(4, true)]
+    [InlineData(5, true)]
+    [InlineData(30, true)]
+    public void Validar_DiasHastaLaEntrega_RetornaValidezEsperada(int diasHastaLaEntrega, bool esValidoEsperado)
     {
-        var requestDate = new DateOnly(2024, 1, 10);
-        var deliveryDate = requestDate.AddDays(leadDays);
+        var Solicitud = new DateOnly(2026, 10, 10);
+        var Entrega = Solicitud.AddDays(diasHastaLaEntrega);
 
-        var result = LeadTimeValidator.Validate(requestDate, deliveryDate, minimumLeadDays);
+        var resultado = LeadTimeValidator.Validate(Solicitud, Entrega, 4);
 
-        result.IsValid.Should().BeTrue();
-        result.Reason.Should().BeNull();
+        resultado.IsValid.Should().Be(esValidoEsperado);
     }
 
     [Fact]
-    public void Validate_NoCumpleConElPlazo_RetornaInvalidoConReasonEsperado()
+    public void Validar_FechaDeEntregaAnteriorALaSolicitud_RetornaFalse()
     {
-        var requestDate = new DateOnly(2024, 1, 10);
-        var deliveryDate = new DateOnly(2024, 1, 11);
+        var Solicitud = new DateOnly(2026, 10, 10);
+        var Entrega = Solicitud.AddDays(-1);
 
-        var result = LeadTimeValidator.Validate(requestDate, deliveryDate, 3);
+        var resultado = LeadTimeValidator.Validate(Solicitud, Entrega, 4);
 
-        result.IsValid.Should().BeFalse();
-        result.Reason.Should().Be("Se requieren al menos 3 días de anticipación. La primera fecha admisible es 13/01/2024.");
+        resultado.IsValid.Should().BeFalse();
     }
 
     [Fact]
-    public void Validate_MinimumLeadDaysNegativo_LanzaArgumentOutOfRangeException()
+    public void Validar_CuandoRechaza_ReasonContienePrimeraFechaAdmisible()
     {
-        var requestDate = new DateOnly(2024, 1, 10);
-        var deliveryDate = new DateOnly(2024, 1, 15);
+        var Solicitud = new DateOnly(2026, 10, 10);
+        var Entrega = Solicitud.AddDays(3);
 
-        Action action = () => LeadTimeValidator.Validate(requestDate, deliveryDate, -1);
+        var resultado = LeadTimeValidator.Validate(Solicitud, Entrega, 4);
 
-        var exception = action.Should().Throw<ArgumentOutOfRangeException>().Which;
-        exception.ParamName.Should().Be("minimumLeadDays");
+        resultado.IsValid.Should().BeFalse();
+        resultado.Reason.Should().Contain("14/10/2026");
+    }
+
+    [Fact]
+    public void Validar_ConMinimumLeadDaysCero_LaEntregaMismoDiaEsValida()
+    {
+        var Solicitud = new DateOnly(2026, 10, 10);
+        var Entrega = Solicitud;
+
+        var resultado = LeadTimeValidator.Validate(Solicitud, Entrega, 0);
+
+        resultado.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Validar_ConMinimumLeadDaysNegativo_LanzaArgumentOutOfRangeException()
+    {
+        var Solicitud = new DateOnly(2026, 10, 10);
+        var Entrega = Solicitud.AddDays(4);
+
+        var excepcion = Record.Exception(() => LeadTimeValidator.Validate(Solicitud, Entrega, -1));
+
+        excepcion.Should().BeOfType<ArgumentOutOfRangeException>()
+            .Which.ParamName.Should().Be("minimumLeadDays");
     }
 }
