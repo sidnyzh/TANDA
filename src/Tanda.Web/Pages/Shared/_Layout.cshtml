@@ -39,7 +39,7 @@
                                 <a class="nav-link text-dark @(Context.Request.Path.StartsWithSegments("/Customers") ? "active" : "")" asp-page="/Customers/Index">Clientes</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Index">Pedidos</a>
+                                <a class="nav-link text-dark @(Context.Request.Path.StartsWithSegments("/Orders") ? "active" : "")" asp-area="" asp-page="/Orders/Create">Pedidos</a>
                             </li>
                         }
                     </ul>
