@@ -63,7 +63,7 @@
                         <td>@order.Number</td>
                         <td>@order.RequestDate.ToString("dd/MM/yyyy")</td>
                         <td>@order.DeliveryDate.ToString("dd/MM/yyyy")</td>
-                        <td>@order.Status</td>
+                        <td><span class="@order.Status.ToBadgeClass()">@order.Status.ToDisplayName()</span></td>
                         <td>@order.TotalAmount.ToString("C0", new System.Globalization.CultureInfo("es-CO"))</td>
                         <td>@order.PaidAmount.ToString("C0", new System.Globalization.CultureInfo("es-CO"))</td>
                         <td>@order.Balance.ToString("C0", new System.Globalization.CultureInfo("es-CO"))</td>

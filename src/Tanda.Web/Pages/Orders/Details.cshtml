@@ -1,13 +1,13 @@
-@page "{id:guid}"
+ï»¿@page "{id:guid}"
 @model Tanda.Web.Pages.Orders.DetailsModel
 @{
-    ViewData["Title"] = "Detalle de cotización";
+    ViewData["Title"] = "Detalle de cotizaciÃ³n";
 }
-<h1>Detalle de cotización</h1>
+<h1>Detalle de cotizaciÃ³n</h1>
 
 @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
 {
-    <div class="alert alert-success">Cotización registrada</div>
+    <div class="alert alert-success">CotizaciÃ³n registrada</div>
 }
 
 @if (!string.IsNullOrWhiteSpace(Model.CapacityWarning))
@@ -20,7 +20,7 @@
     <div class="card">
         <div class="card-body">
             <dl class="row mb-0">
-                <dt class="col-sm-3">Número</dt>
+                <dt class="col-sm-3">NÃºmero</dt>
                 <dd class="col-sm-9">@Model.Order.Number</dd>
 
                 <dt class="col-sm-3">Cliente</dt>
@@ -29,7 +29,7 @@
                 <dt class="col-sm-3">Producto</dt>
                 <dd class="col-sm-9">@Model.Order.Product.Name</dd>
 
-                <dt class="col-sm-3">Tamaño</dt>
+                <dt class="col-sm-3">TamaÃ±o</dt>
                 <dd class="col-sm-9">@Model.Order.Size.Name</dd>
 
                 <dt class="col-sm-3">Cantidad</dt>
@@ -63,9 +63,7 @@
 
                 <dt class="col-sm-3">Estado</dt>
                 <dd class="col-sm-9">
-                    <span class="badge @Tanda.Web.Pages.Orders.DetailsModel.GetStatusBadgeClass(Model.Order.Status)">
-                        @Model.Order.Status
-                    </span>
+                    <span class="@Model.Order.Status.ToBadgeClass()">@Model.Order.Status.ToDisplayName()</span>
                 </dd>
             </dl>
         </div>

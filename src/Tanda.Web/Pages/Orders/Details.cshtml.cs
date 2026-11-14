@@ -30,16 +30,4 @@ public class DetailsModel(IOrderRepository orders) : PageModel
 
         return Page();
     }
-
-    public static string GetStatusBadgeClass(OrderStatus status) =>
-        status switch
-        {
-            OrderStatus.Quoted => "bg-secondary",
-            OrderStatus.Confirmed => "bg-primary",
-            OrderStatus.InProduction => "bg-warning text-dark",
-            OrderStatus.Ready => "bg-info text-dark",
-            OrderStatus.Delivered => "bg-success",
-            OrderStatus.Cancelled => "bg-danger",
-            _ => "bg-secondary"
-        };
 }
