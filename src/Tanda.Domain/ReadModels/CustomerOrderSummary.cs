@@ -1,3 +1,5 @@
+using Tanda.Domain.Entities;
+
 namespace Tanda.Domain.ReadModels;
 
 public sealed record CustomerOrderSummary(
