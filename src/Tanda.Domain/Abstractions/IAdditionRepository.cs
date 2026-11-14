@@ -4,6 +4,8 @@ namespace Tanda.Domain.Abstractions;
 
 public interface IAdditionRepository
 {
+    Task<IReadOnlyList<Addition>> GetActiveAsync(CancellationToken cancellationToken = default);
+
     Task<Addition?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task AddAsync(Addition addition, CancellationToken cancellationToken = default);
     Task UpdateAsync(Addition addition, CancellationToken cancellationToken = default);
