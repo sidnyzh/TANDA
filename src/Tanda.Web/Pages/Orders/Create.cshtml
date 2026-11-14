@@ -1,0 +1,212 @@
+@page
+@model Tanda.Web.Pages.Orders.CreateModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Nueva cotización";
+}
+<h1>Nueva cotización</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Input.CustomerId" class="form-label">Cliente</label>
+                <select asp-for="Input.CustomerId" class="form-select">
+                    <option value="">Seleccione...</option>
+                    @foreach (var customer in Model.Customers)
+                    {
+                        <option value="@customer.Id">@customer.DisplayName</option>
+                    }
+                </select>
+                <span asp-validation-for="Input.CustomerId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.ProductId" class="form-label">Producto</label>
+                <select asp-for="Input.ProductId" class="form-select" id="product-select">
+                    <option value="">Seleccione...</option>
+                    @foreach (var product in Model.Products)
+                    {
+                        <option value="@product.Id">@product.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="Input.ProductId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.SizeId" class="form-label">Tamaño</label>
+                <select asp-for="Input.SizeId" class="form-select" id="size-select">
+                    <option value="">Seleccione...</option>
+                    @foreach (var size in Model.Sizes)
+                    {
+                        <option value="@size.Id"
+                                data-product-id="@size.ProductId"
+                                data-base-price="@size.BasePrice.ToString(CultureInfo.InvariantCulture)">
+                            @size.Name
+                        </option>
+                    }
+                </select>
+                <span asp-validation-for="Input.SizeId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Quantity" class="form-label">Cantidad</label>
+                <input asp-for="Input.Quantity" class="form-control" type="number" min="1" id="quantity-input" />
+                <span asp-validation-for="Input.Quantity" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.DeliveryDate" class="form-label">Fecha de entrega</label>
+                <input asp-for="Input.DeliveryDate" class="form-control" type="date" />
+                <span asp-validation-for="Input.DeliveryDate" class="text-danger"></span>
+            </div>
+
+            <fieldset class="mb-3">
+                <legend class="col-form-label pt-0">Adiciones</legend>
+                @foreach (var addition in Model.Additions)
+                {
+                    <div class="form-check addition-item" data-product-id="@addition.ProductId">
+                        <input class="form-check-input addition-checkbox"
+                               type="checkbox"
+                               name="Input.SelectedAdditionIds"
+                               value="@addition.Id"
+                               id="addition-@addition.Id"
+                               data-product-id="@addition.ProductId"
+                               data-price="@addition.Price.ToString(CultureInfo.InvariantCulture)"
+                               data-name="@addition.Name"
+                               @(Model.Input.SelectedAdditionIds.Contains(addition.Id) ? "checked" : null) />
+                        <label class="form-check-label" for="addition-@addition.Id">
+                            @addition.Name (@addition.Price.ToString("C0", new CultureInfo("es-CO")))
+                        </label>
+                    </div>
+                }
+                <span asp-validation-for="Input.SelectedAdditionIds" class="text-danger"></span>
+            </fieldset>
+
+            <button type="submit" class="btn btn-primary">Cotizar</button>
+            <a asp-page="/Index" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">Resumen</div>
+            <div class="card-body">
+                <p class="mb-2"><strong>Precio base:</strong> <span id="summary-base">$0</span></p>
+                <p class="mb-1"><strong>Adiciones:</strong></p>
+                <ul id="summary-additions" class="mb-2 ps-3">
+                    <li class="text-muted">Sin adiciones</li>
+                </ul>
+                <hr />
+                <p class="mb-0"><strong>Total:</strong> <span id="summary-total">$0</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const productSelect = document.getElementById("product-select");
+            const sizeSelect = document.getElementById("size-select");
+            const quantityInput = document.getElementById("quantity-input");
+            const additionCheckboxes = Array.from(document.querySelectorAll(".addition-checkbox"));
+            const additionContainers = Array.from(document.querySelectorAll(".addition-item"));
+            const summaryBase = document.getElementById("summary-base");
+            const summaryAdditions = document.getElementById("summary-additions");
+            const summaryTotal = document.getElementById("summary-total");
+
+            const formatter = new Intl.NumberFormat("es-CO", {
+                style: "currency",
+                currency: "COP",
+                maximumFractionDigits: 0
+            });
+
+            function money(value) {
+                return formatter.format(value || 0);
+            }
+
+            function filterByProduct() {
+                const selectedProductId = productSelect.value;
+
+                Array.from(sizeSelect.options).forEach(option => {
+                    if (!option.value) {
+                        option.hidden = false;
+                        return;
+                    }
+
+                    const optionProductId = option.dataset.productId;
+                    const visible = !selectedProductId || optionProductId === selectedProductId;
+                    option.hidden = !visible;
+
+                    if (!visible && option.selected) {
+                        option.selected = false;
+                    }
+                });
+
+                additionContainers.forEach(container => {
+                    const itemProductId = container.dataset.productId;
+                    const visible = !selectedProductId || itemProductId === selectedProductId;
+                    container.hidden = !visible;
+
+                    const checkbox = container.querySelector("input[type='checkbox']");
+                    if (!visible && checkbox.checked) {
+                        checkbox.checked = false;
+                    }
+                });
+            }
+
+            function updateSummary() {
+                const selectedSize = sizeSelect.options[sizeSelect.selectedIndex];
+                const basePrice = selectedSize && selectedSize.value
+                    ? Number.parseFloat(selectedSize.dataset.basePrice || "0")
+                    : 0;
+
+                const quantity = Math.max(1, Number.parseInt(quantityInput.value || "1", 10) || 1);
+
+                const selectedAdditions = additionCheckboxes
+                    .filter(input => input.checked && !input.closest(".addition-item").hidden)
+                    .map(input => ({
+                        name: input.dataset.name,
+                        price: Number.parseFloat(input.dataset.price || "0")
+                    }));
+
+                const additionsTotal = selectedAdditions.reduce((sum, item) => sum + item.price, 0);
+                const total = (basePrice + additionsTotal) * quantity;
+
+                summaryBase.textContent = money(basePrice);
+
+                summaryAdditions.innerHTML = "";
+                if (selectedAdditions.length === 0) {
+                    const emptyItem = document.createElement("li");
+                    emptyItem.className = "text-muted";
+                    emptyItem.textContent = "Sin adiciones";
+                    summaryAdditions.appendChild(emptyItem);
+                } else {
+                    selectedAdditions.forEach(item => {
+                        const li = document.createElement("li");
+                        li.textContent = `${item.name}: ${money(item.price)}`;
+                        summaryAdditions.appendChild(li);
+                    });
+                }
+
+                summaryTotal.textContent = money(total);
+            }
+
+            productSelect.addEventListener("change", () => {
+                filterByProduct();
+                updateSummary();
+            });
+
+            sizeSelect.addEventListener("change", updateSummary);
+            quantityInput.addEventListener("input", updateSummary);
+            additionCheckboxes.forEach(input => input.addEventListener("change", updateSummary));
+
+            filterByProduct();
+            updateSummary();
+        })();
+    </script>
+}

@@ -4,6 +4,7 @@ namespace Tanda.Domain.Abstractions;
 
 public interface ISizeRepository
 {
+    Task<IReadOnlyList<Size>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<Size?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task AddAsync(Size size, CancellationToken cancellationToken = default);
     Task UpdateAsync(Size size, CancellationToken cancellationToken = default);

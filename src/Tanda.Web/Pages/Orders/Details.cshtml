@@ -1,0 +1,71 @@
+﻿@page "{id:guid}"
+@model Tanda.Web.Pages.Orders.DetailsModel
+@{
+    ViewData["Title"] = "Detalle de cotización";
+}
+<h1>Detalle de cotización</h1>
+
+@if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+{
+    <div class="alert alert-success">Cotización registrada</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.CapacityWarning))
+{
+    <div class="alert alert-warning">@Model.CapacityWarning</div>
+}
+
+@if (Model.Order is not null)
+{
+    <div class="card">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Número</dt>
+                <dd class="col-sm-9">@Model.Order.Number</dd>
+
+                <dt class="col-sm-3">Cliente</dt>
+                <dd class="col-sm-9">@Model.Order.Customer.FullName</dd>
+
+                <dt class="col-sm-3">Producto</dt>
+                <dd class="col-sm-9">@Model.Order.Product.Name</dd>
+
+                <dt class="col-sm-3">Tamaño</dt>
+                <dd class="col-sm-9">@Model.Order.Size.Name</dd>
+
+                <dt class="col-sm-3">Cantidad</dt>
+                <dd class="col-sm-9">@Model.Order.Quantity</dd>
+
+                <dt class="col-sm-3">Adiciones</dt>
+                <dd class="col-sm-9">
+                    @if (!Model.Order.OrderAdditions.Any())
+                    {
+                        <span>Sin adiciones</span>
+                    }
+                    else
+                    {
+                        <ul class="mb-0">
+                            @foreach (var orderAddition in Model.Order.OrderAdditions)
+                            {
+                                <li>@orderAddition.Addition.Name (@orderAddition.Price.ToString("C0", Tanda.Web.Pages.Orders.DetailsModel.CopCulture))</li>
+                            }
+                        </ul>
+                    }
+                </dd>
+
+                <dt class="col-sm-3">Fecha de solicitud</dt>
+                <dd class="col-sm-9">@Model.Order.RequestDate.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3">Fecha de entrega</dt>
+                <dd class="col-sm-9">@Model.Order.DeliveryDate.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3">Total</dt>
+                <dd class="col-sm-9">@Model.Order.TotalAmount.ToString("C0", Tanda.Web.Pages.Orders.DetailsModel.CopCulture)</dd>
+
+                <dt class="col-sm-3">Estado</dt>
+                <dd class="col-sm-9">
+                    <span class="@Model.Order.Status.ToBadgeClass()">@Model.Order.Status.ToDisplayName()</span>
+                </dd>
+            </dl>
+        </div>
+    </div>
+}

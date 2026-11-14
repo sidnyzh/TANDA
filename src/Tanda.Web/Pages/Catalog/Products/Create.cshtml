@@ -6,5 +6,35 @@
 <div class="mb-3"><label asp-for="Input.Name"></label><input asp-for="Input.Name" class="form-control" /><span asp-validation-for="Input.Name" class="text-danger"></span></div>
 <div class="mb-3"><label asp-for="Input.Category"></label><select asp-for="Input.Category" asp-items="Model.Categories" class="form-select"><option value="">Seleccione una categoría</option></select><span asp-validation-for="Input.Category" class="text-danger"></span></div>
 <div class="mb-3"><label asp-for="Input.MinimumLeadDays"></label><input asp-for="Input.MinimumLeadDays" class="form-control" /><span asp-validation-for="Input.MinimumLeadDays" class="text-danger"></span></div>
+<fieldset class="mb-3">
+    <legend>Tamaños</legend>
+    <table class="table">
+        <thead>
+            <tr><th>Seleccionar</th><th>Precio base</th><th>Esfuerzo</th></tr>
+        </thead>
+        <tbody>
+        @for (var i = 0; i < Model.Input.Sizes.Count; i++)
+        {
+            <tr>
+                <td>
+                    <input asp-for="Input.Sizes[i].Name" type="hidden" />
+                    <div class="form-check">
+                        <input asp-for="Input.Sizes[i].Selected" class="form-check-input" />
+                        <label asp-for="Input.Sizes[i].Selected" class="form-check-label">@Model.Input.Sizes[i].Name</label>
+                    </div>
+                </td>
+                <td>
+                    <input asp-for="Input.Sizes[i].BasePrice" class="form-control" type="number" min="0.01" step="0.01" />
+                    <span asp-validation-for="Input.Sizes[i].BasePrice" class="text-danger"></span>
+                </td>
+                <td>
+                    <input asp-for="Input.Sizes[i].Esfuerzo" class="form-control" type="number" min="1" max="10" />
+                    <span asp-validation-for="Input.Sizes[i].Esfuerzo" class="text-danger"></span>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</fieldset>
 <button class="btn btn-primary">Guardar</button> <a asp-page="Index">Cancelar</a></form>
 @section Scripts { <partial name="_ValidationScriptsPartial" /> }
