@@ -322,6 +322,9 @@ namespace Tanda.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
@@ -330,10 +333,20 @@ namespace Tanda.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Number")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("RequestDate")
                         .HasColumnType("date");
+
+                    b.Property<Guid>("SizeId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -345,7 +358,32 @@ namespace Tanda.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Orders");
+                    b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SizeId");
+
+                    b.ToTable("Orders", (string)null);
+                });
+
+            modelBuilder.Entity("Tanda.Domain.Entities.OrderAddition", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AdditionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("OrderId", "AdditionId");
+
+                    b.HasIndex("AdditionId");
+
+                    b.ToTable("OrderAdditions", (string)null);
                 });
 
             modelBuilder.Entity("Tanda.Domain.Entities.Payment", b =>
@@ -499,10 +537,45 @@ namespace Tanda.Infrastructure.Persistence.Migrations
                     b.HasOne("Tanda.Domain.Entities.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tanda.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tanda.Domain.Entities.Size", "Size")
+                        .WithMany()
+                        .HasForeignKey("SizeId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Size");
+                });
+
+            modelBuilder.Entity("Tanda.Domain.Entities.OrderAddition", b =>
+                {
+                    b.HasOne("Tanda.Domain.Entities.Addition", "Addition")
+                        .WithMany()
+                        .HasForeignKey("AdditionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tanda.Domain.Entities.Order", "Order")
+                        .WithMany("OrderAdditions")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Addition");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Tanda.Domain.Entities.Payment", b =>
@@ -534,6 +607,8 @@ namespace Tanda.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Tanda.Domain.Entities.Order", b =>
                 {
+                    b.Navigation("OrderAdditions");
+
                     b.Navigation("Payments");
                 });
 

@@ -11,7 +11,7 @@ public sealed class TandaDbContext : IdentityDbContext
     {
     }
 
-    public DbSet<Product> Products => Set<Product>();
+    public Microsoft.EntityFrameworkCore.DbSet<Product> Products => Set<Product>();
 
     public DbSet<Size> Sizes => Set<Size>();
 
@@ -22,6 +22,8 @@ public sealed class TandaDbContext : IdentityDbContext
     public DbSet<Customer> Customers => Set<Customer>();
 
     public DbSet<Order> Orders => Set<Order>();
+
+    public DbSet<OrderAddition> OrderAdditions => Set<OrderAddition>();
 
     public DbSet<Payment> Payments => Set<Payment>();
 
